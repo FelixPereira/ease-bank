@@ -13,10 +13,10 @@
 </head>
 <body>
   <header class="header">
+    <div class="header__logo">
+      <img src="assets/images/logo.svg" alt="Logotipo">
+    </div>
     <nav class="header__navigation">
-      <div class="header__logo">
-       <img src="assets/images/logo.svg" alt="Logotipo">
-      </div>
       <ul class="header__links">
         <li>
           <a href="#hero">Home</a>
@@ -34,7 +34,30 @@
           <a href="#">Careers</a>
         </li>
       </ul>
-      <a class="header__btn btn" href="#">Request Invite</a>
+      <a style="display: none;" class="header__btn btn" href="#">Request Invite</a>
+    </nav>
+    <div class="header__hamburger">
+      <img id="teste" src="assets/images/icon-hamburger.svg" alt="Hamburger icon">
+    </div>
+    <nav class="header__navigation--mobile">
+      <ul class="header__links">
+        <li>
+          <a href="#hero">Home</a>
+        </li>
+        <li>
+          <a href="#whyChoose">About</a>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+        </li>
+        <li>
+          <a href="#articles">Blog</a>
+        </li>
+        <li>
+          <a href="#">Careers</a>
+        </li>
+      </ul>
+      <a style="display: none;" class="header__btn btn" href="#">Request Invite</a>
     </nav>
   </header>
   <main>
@@ -175,7 +198,7 @@
       </div>
     </footer>
   </main>
-
+  <div class="backdrop"></div>
   <script src="assets/js/app.js"></script>
 </body>
 </html>

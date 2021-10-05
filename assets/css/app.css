@@ -43,6 +43,64 @@ body{
     overflow-x: hidden;
 }
 
+.backdrop{
+    background: linear-gradient
+        (hsl(233, 8%, 62%), hsla(233, 8%, 62%, 3%));
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+/* Header start */
+
+.header{
+    padding: 20px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 2;
+}
+
+.header__navigation{
+    display: none;
+}
+
+.header__navigation--mobile ul{
+    background-color: #ffffff;
+    width: 90%;
+    position: absolute;
+    top: 5rem;
+    left: 8%;
+    padding: 30px;
+    border-radius: 5px;
+    transition: .3s;
+
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.showMenu{
+    display: block;
+    transition: .3s;
+}
+
+.header__navigation--mobile a{
+    color: hsl(233, 26%, 24%);
+    text-decoration: none;
+    line-height: 2.5;
+    font-weight: 500;
+}
+
+.header__hamburger:hover{
+    cursor: pointer;
+}
+
+/* Header start */
+
+
 /* Hero start */
 
 .hero{
