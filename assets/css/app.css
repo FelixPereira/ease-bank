@@ -43,6 +43,7 @@ body{
     overflow-x: hidden;
 }
 
+
 .backdrop{
     background: linear-gradient(hsl(233, 26%, 24%), hsla(233, 26%, 24%, 0.548));
     height: 100%;
@@ -51,6 +52,7 @@ body{
     left: 0;
     position: fixed;
     display: none;
+    z-index: 1;
 }
 
 /* Header start */
@@ -63,7 +65,7 @@ body{
     z-index: 2;
 }
 
-.header__navigation{
+.header__navigation--desktop{
     display: none;
 }
 
@@ -78,12 +80,19 @@ body{
     transition: .3s;
     text-align: center;
     list-style: none;
-    display: none;
+    transform: translateY(-200%);
+    z-index: 2;
 }
 
 .showMenu{
-    display: block;
-    transition: .3s;
+    animation: showMenu 1s ease-out forwards;
+}
+
+@keyframes showMenu{
+
+    100%{
+        transform: translateY(5%);
+    }
 }
 
 .header__navigation--mobile a{
@@ -452,39 +461,51 @@ body{
 /* Min-width 1024 start */
 
 @media screen and (min-width: 1024px){
+    /* why to choose start */
 
-        /* why to choose start */
+    .header__navigation--desktop{
+        display: block;
+        display: flex;
+    }
 
-        .whyChoose__innerSection{
-            grid-template-columns: 25% 25% 25% 25%;
-        }
+    .header__hamburger,
+    .header__navigation--mobile{
+        display: none;
+    }
     
-        .whyChoose__item{
-            text-align: left;
-        }
+
+    /* why to choose start */
+
+    .whyChoose__innerSection{
+        grid-template-columns: 25% 25% 25% 25%;
+    }
     
-        .articles__item:not( :nth-child(4)),
-        .whyChoose__item:not(:nth-child(4)){
-            margin-right: 1.875rem;
-        }
+    .whyChoose__item{
+        text-align: left;
+    }
+    
+    .articles__item:not( :nth-child(4)),
+    .whyChoose__item:not(:nth-child(4)){
+        margin-right: 1.875rem;
+    }
         
-        /* why to choose start */
+    /* why to choose start */
     
-        /* articles start */
+    /* articles start */
     
-        .articles__innerSection{
-            grid-template-columns: 25% 25% 25% 25%;
-        }
+    .articles__innerSection{
+        grid-template-columns: 25% 25% 25% 25%;
+    }
     
-        /* articles end */
+    /* articles end */
     
-        /* Footer start */
+    /* Footer start */
 
-        .footer{
-            grid-template-columns: 25% 15% 15% 30% 15%;
-        }
+    .footer{
+        grid-template-columns: 25% 15% 15% 30% 15%;
+    }
     
-        /* Footer end */
+    /* Footer end */
 }
 
 /* Min-width 1024 start */

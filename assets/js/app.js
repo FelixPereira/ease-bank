@@ -10,22 +10,21 @@ hamburgerBtn.addEventListener('click', () => {
         mobileNav.style.display = 'none';
         teste.src = 'assets/images/icon-hamburger.svg';
     } else{
-        mobileNav.style.display = 'block';
-        teste.src = 'assets/images/icon-close.svg';
+        mobileNav.classList.add('showMenu');
         backdrop.style.display = 'block';
     }
 });
 
 backdrop.addEventListener('click', () => {
     backdrop.style.display = 'none';
-    mobileNav.style.display = 'none';
+    mobileNav.classList.remove('showMenu');
     teste.src = 'assets/images/icon-hamburger.svg';
 });
 
 mobileLinks.forEach(mobileLink => {
     mobileLink.addEventListener('click', () => {
         backdrop.style.display = 'none';
-        mobileNav.style.display = 'none';
+        mobileNav.classList.remove('showMenu');
         teste.src = 'assets/images/icon-hamburger.svg';
     });
 });
