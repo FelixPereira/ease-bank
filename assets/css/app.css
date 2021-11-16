@@ -311,9 +311,10 @@ body{
 
     .hero__text{
         text-align: left;
-        width: 30%;
+        width: 40%;
         position: absolute;
         left: 0;
+        padding-left: 8%;
     }
 
     .hero__title,
@@ -331,8 +332,8 @@ body{
         flex-direction: column;
         align-items: center;
         padding-bottom: 6.25rem;
-        width: 70%;
-        transform: translateX(220px);
+        width: 60%;
+        transform: translateX(200px);
         padding-bottom: 0
         ;
     }
@@ -381,8 +382,7 @@ body{
         grid-template-columns: 50% 50%;
     }
 
-    /* articles end */
-
+    /* Articles end */
     /* Footer start */
 
     .footer{
@@ -462,24 +462,43 @@ body{
 
 /* Min-width 1024 start */
 
-@media screen and (min-width: 1024px){
+@media screen and (min-width: 900px){
     /* why to choose start */
-
+    .header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    
     .header__navigation--desktop{
         display: block;
         display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 80%;
     }
-
+    
+    .header__logo {
+      width: 20%;
+    }
+    
+    .header__navigation--desktop ul {
+      display: flex;
+      justify-content: space-between;
+      list-style: none;
+      width: 70%;
+    }
+    
     .header__hamburger,
     .header__navigation--mobile{
-        display: none;
+      display: none;
     }
     
 
     /* why to choose start */
 
     .whyChoose__innerSection{
-        grid-template-columns: 25% 25% 25% 25%;
+      grid-template-columns: 25% 25% 25% 25%;
     }
     
     .whyChoose__item{
