@@ -68,40 +68,41 @@ let currentUser;
 
 /////////////////////////////////////////////////
 // Functions
-const displayMovements = (movements) => {
-  movements.forEach((movement, idx) => {
-    const type = movement > 1 ? 'deposit' : 'withdrawal';
-    
-    const html = `
-      <div class="movements__row">
-        <div class='movements__type movements__type--${type}'>
-          ${idx + 1} ${type}
-        </div>
-        <div class="movements__value">${Math.abs(movement)}€</div>
+
+
+const updateUI = currentUser => {
+  currentUser.movements.forEach((movement, idx) => {
+      const type = movement > 1 ? 'deposit' : 'withdrawal';
   
-      </div>
-    `;
+      const html = `
+        <div class="movements__row">
+          <div class='movements__type movements__type--${type}'>
+            ${idx + 1} ${type}
+          </div>
+          <div class="movements__value">${Math.abs(movement)}€</div>
     
-    containerMovements.insertAdjacentHTML('afterbegin', html);
-  });
-};
-
-const displayBalance = (movements) => {
-  labelBalance.textContent = movements.reduce((acc, mov) => acc + mov, 0) + '€';
-};
-
-const calcSummary = currentUser => {
+        </div>
+      `;
+  
+      containerMovements.insertAdjacentHTML('afterbegin', html);
+    });
+  
+  
+  currentUser.balance = currentUser.movements.reduce((acc, mov) => acc + mov, 0);
+  
+  labelBalance.textContent = `${currentUser.balance}€`;
+  
   const inComes = currentUser.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
     labelSumIn.textContent = `${inComes}€`;
-    
+      
   const out = currentUser.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
     labelSumOut.textContent = `${Math.abs(out)}€`;
-
-  const interestRate = currentUser.interestRate
+  
+  const interestRate = currentUser.movements
     .filter(deposit => deposit > 0)
     .map(deposit => (deposit * 1.2) / 100)
     .filter(interest => interest >= 1)
@@ -132,18 +133,45 @@ btnLogin.addEventListener('click', function(e) {
 
     labelWelcome.textContent = `Wellcome, ${    currentUser.owner.split(' ')[0]}`;
     
-    // Display movements
-    displayMovements(currentUser.movements);
-
-    // Display summary
-    calcSummary(currentUser);
+    // Update UI
+    updateUI(currentUser);
     
-    // Display balance
-    displayBalance(currentUser.movements);
-  }
-})
+    //Clear fields
+    inputLoginUsername.value = '';
+    inputLoginPin.value = '';
+    inputLoginPin.blur();
+
+  };
+});
+
+btnTransfer.addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  const amount = Number(inputTransferAmount.value);
+  const recieverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
+
+  if(amount > 0 && recieverAcc.username && currentUser.balance >= amount) {
+    
+    recieverAcc.movements.push(amount);
+    currentUser.movements.push(-amount);
+    
+    updateUI(currentUser);
+  };
+  
+  inputTransferAmount.value = '';
+  inputTransferTo.value = '';
+});
+
+btnClose.addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  if(currentUser.username === inputCloseUsername.value && currentUser.pin === Number(inputClosePin.value)) {
+      console.log('delete');
+  };
+});
 
 /*
+
 const movements = [430, -1000, 700, -50, 90];
 
 const euroToUsd = 1.1;
