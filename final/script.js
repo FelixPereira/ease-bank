@@ -70,8 +70,10 @@ let currentUser;
 // Functions
 
 
-const updateUI = currentUser => {
-  currentUser.movements.forEach((movement, idx) => {
+const displayMovements = account => {
+  containerApp.innerHTML = '';
+  
+  account.movements.forEach((movement, idx) => {
       const type = movement > 1 ? 'deposit' : 'withdrawal';
   
       const html = `
@@ -86,28 +88,37 @@ const updateUI = currentUser => {
   
       containerMovements.insertAdjacentHTML('afterbegin', html);
     });
+};
   
+const displayBalance = account => {
+  account.balance = account.movements.reduce((accumulator, movement) => accumulator + movement, 0);
+    
+  labelBalance.textContent = `${account.balance}€`;
+};
   
-  currentUser.balance = currentUser.movements.reduce((acc, mov) => acc + mov, 0);
-  
-  labelBalance.textContent = `${currentUser.balance}€`;
-  
-  const inComes = currentUser.movements
+const displaySummary = account => {
+  const inComes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
     labelSumIn.textContent = `${inComes}€`;
-      
-  const out = currentUser.movements
+        
+  const out = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
     labelSumOut.textContent = `${Math.abs(out)}€`;
-  
-  const interestRate = currentUser.movements
+    
+  const interestRate = account.movements
     .filter(deposit => deposit > 0)
     .map(deposit => (deposit * 1.2) / 100)
     .filter(interest => interest >= 1)
     .reduce((acc, mov) => acc + mov, 0);
     labelSumInterest.textContent = `${interestRate}€`;
+};
+
+const updateUI = account => {
+  displayMovements(account);
+  displayBalance(account);
+  displaySummary(account);
 };
 
 const creatUserName = accounts => {
@@ -162,6 +173,20 @@ btnTransfer.addEventListener('click', function(e) {
   inputTransferTo.value = '';
 });
 
+btnLoan.addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  const amount = Number(inputLoanAmount.value);
+  if(amount > 0 && currentUser.movements.some(mov => mov / 10)) {
+    currentUser.movements.push(amount);
+    
+    // Update UI
+    updateUI(currentUser);
+  };
+  
+  inputLoanAmount.value = '';
+});
+
 btnClose.addEventListener('click', function(e) {
   e.preventDefault();
   
@@ -173,6 +198,14 @@ btnClose.addEventListener('click', function(e) {
     containerApp.style.opacity = 0;
   };
 });
+
+btnSort.addEventListener('click', function() {
+  currentUser.movements.sort((a, b) => b - a);
+  
+  displayMovements(currentUser);
+});
+
+
 
 /*
 
