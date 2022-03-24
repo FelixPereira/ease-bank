@@ -70,9 +70,7 @@ let currentUser;
 // Functions
 
 
-const displayMovements = account => {
-  containerApp.innerHTML = '';
-  
+const displayMovements = account => { 
   account.movements.forEach((movement, idx) => {
       const type = movement > 1 ? 'deposit' : 'withdrawal';
   
@@ -116,6 +114,8 @@ const displaySummary = account => {
 };
 
 const updateUI = account => {
+  containerApp.innerHTML = '';
+
   displayMovements(account);
   displayBalance(account);
   displaySummary(account);
