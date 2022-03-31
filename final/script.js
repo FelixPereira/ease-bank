@@ -64,14 +64,18 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 let currentUser;
+let sort = false;
 
 
 /////////////////////////////////////////////////
 // Functions
 
 
-const displayMovements = account => { 
-  account.movements.forEach((movement, idx) => {
+const displayMovements = (account, sortState) => { 
+  const movements = sortState ? account.movements.slice(0).sort((a, b) => b - a) : account.movements;
+  
+  
+  movements.forEach((movement, idx) => {
       const type = movement > 1 ? 'deposit' : 'withdrawal';
   
       const html = `
@@ -79,8 +83,7 @@ const displayMovements = account => {
           <div class='movements__type movements__type--${type}'>
             ${idx + 1} ${type}
           </div>
-          <div class="movements__value">${Math.abs(movement)}€</div>
-    
+          <div class="movements__value">${((Math.abs(movement))).toFixed(2)} €</div>
         </div>
       `;
   
@@ -91,32 +94,32 @@ const displayMovements = account => {
 const displayBalance = account => {
   account.balance = account.movements.reduce((accumulator, movement) => accumulator + movement, 0);
     
-  labelBalance.textContent = `${account.balance}€`;
+  labelBalance.textContent = (account.balance).toFixed(2) + ' €';
 };
-  
+
 const displaySummary = account => {
   const inComes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-    labelSumIn.textContent = `${inComes}€`;
+    labelSumIn.textContent = (inComes).toFixed(2) + ' €';
         
   const out = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-    labelSumOut.textContent = `${Math.abs(out)}€`;
+    labelSumOut.textContent = (Math.abs(out)).toFixed(2) + ' €';;
     
   const interestRate = account.movements
     .filter(deposit => deposit > 0)
     .map(deposit => (deposit * 1.2) / 100)
     .filter(interest => interest >= 1)
     .reduce((acc, mov) => acc + mov, 0);
-    labelSumInterest.textContent = `${interestRate}€`;
+    labelSumInterest.textContent = (interestRate).toFixed(2) + ' €';;
 };
 
-const updateUI = account => {
-  containerApp.innerHTML = '';
+const updateUI = (account, sortState) => {
+  containerMovements.innerHTML = '';
 
-  displayMovements(account);
+  displayMovements(account, sortState);
   displayBalance(account);
   displaySummary(account);
 };
@@ -145,13 +148,12 @@ btnLogin.addEventListener('click', function(e) {
     labelWelcome.textContent = `Wellcome, ${    currentUser.owner.split(' ')[0]}`;
     
     // Update UI
-    updateUI(currentUser);
+    updateUI(currentUser, sort);
     
     //Clear fields
     inputLoginUsername.value = '';
     inputLoginPin.value = '';
     inputLoginPin.blur();
-
   };
 });
 
@@ -166,7 +168,7 @@ btnTransfer.addEventListener('click', function(e) {
     recieverAcc.movements.push(amount);
     currentUser.movements.push(-amount);
     
-    updateUI(currentUser);
+    updateUI(currentUser, sort);
   };
   
   inputTransferAmount.value = '';
@@ -176,12 +178,12 @@ btnTransfer.addEventListener('click', function(e) {
 btnLoan.addEventListener('click', function(e) {
   e.preventDefault();
   
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
   if(amount > 0 && currentUser.movements.some(mov => mov / 10)) {
     currentUser.movements.push(amount);
     
     // Update UI
-    updateUI(currentUser);
+    updateUI(currentUser, sort);
   };
   
   inputLoanAmount.value = '';
@@ -195,62 +197,26 @@ btnClose.addEventListener('click', function(e) {
     && currentUser.pin === Number(inputClosePin.value)) {
       const accountIndex = accounts.findIndex(acc => acc.username === currentUser.username);
     accounts.splice(accountIndex, 1);
-    containerApp.style.opacity = 0;
+    containerApp.style.opacity = 1;
   };
 });
 
 btnSort.addEventListener('click', function() {
-  currentUser.movements.sort((a, b) => b - a);
+  const sortMovements = sortState => {
+  return !sortState;
+  };
   
-  displayMovements(currentUser);
+  sort = sortMovements(sort);
+
+  updateUI(currentUser, sort);
 });
 
 
-
 /*
-
-const movements = [430, -1000, 700, -50, 90];
-
 const euroToUsd = 1.1;
 const movementsDollar = movements.map(movement => movement * euroToUsd);
 
 for(const movement of movementsDollar) {
   console.log(Math.trunc(movement) + ' USD');
 };
-
-
-const movementDescription = movements.map((mov, idx, arr) => {
-  return `Movement ${idx + 1}: You ${mov > 0 ? 'deposit' : 'withdrew'} ${Math.abs(mov)}`;
-  }
-);
-
-for(const desc of movementDescription) {
-  console.log(desc);
-};
-
-COMPUTING USERNAMES
-
-const allMovs = [-300, 246, -200, 106, 2395,  -209, -3467];
-const totalAmount = allMovs.reduce((accumul, allMov) => accumul + allMov, 0);
-// console.log(totalAmount);
-
-const max = allMovs.reduce((acc, mov) => acc > mov ? acc : mov, allMovs[0]);
-
-console.log(max);
-
-/*
-FIND METHOD
-
-const movements = [430, -1000, 700, -50, 90];
-const mil = movements.find(mov => mov < 0);
-
-
-const account = accounts.find(acc => acc.owner === 'Jessica Davis');
-
-const accounta = accounts.forEach(acc => { const accou = acc.owner === 'Jessica Davis'
-  return accou;
-});
-
-console.log(account);
-console.log(accounta);
 */
