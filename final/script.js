@@ -11,6 +11,16 @@ const account1 = {
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111,
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z'
+  ]
 };
 
 const account2 = {
@@ -18,6 +28,16 @@ const account2 = {
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
+  movementsDates: [
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z'
+  ]
 };
 
 const account3 = {
@@ -25,6 +45,14 @@ const account3 = {
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
+  movementsDates: [
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z'
+  ]
 };
 
 const account4 = {
@@ -32,6 +60,14 @@ const account4 = {
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
+  movementsDates: [
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z',
+    '2018-12-13T23:16:43.194Z'
+  ]
 };
 
 const accounts = [account1, account2, account3, account4];
@@ -70,24 +106,51 @@ let sort = false;
 /////////////////////////////////////////////////
 // Functions
 
+const daysPassed = (currentDate, movementDate) => {
+  return (currentDate - movementDate) / (1000 * 60 * 60 * 24);
+}
+
+console.log(daysPassed(new Date(2022, 3, 5), new Date(2022, 3, 2)));
+
+
+const formatMovementsDate = date => {
+  console.log(daysPassed(Number(new Date()), date));
+  console.log(Number(new Date()));
+};
+
+/*
+const formatMovementsDate = date => {
+  const day = `${date.getDate()}`.padStart(2, 0);
+  const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  const year = date.getFullYear();
+
+  return daysPassed(new Date().toDateString(), new Date(year, month, day));
+};
+
+*/
+
+formatMovementsDate(new Date(2022, 3, 2));
 
 const displayMovements = (account, sortState) => { 
   const movements = sortState ? account.movements.slice(0).sort((a, b) => b - a) : account.movements;
   
-  
   movements.forEach((movement, idx) => {
-      const type = movement > 1 ? 'deposit' : 'withdrawal';
-  
-      const html = `
-        <div class="movements__row">
-          <div class='movements__type movements__type--${type}'>
-            ${idx + 1} ${type}
-          </div>
-          <div class="movements__value">${((Math.abs(movement))).toFixed(2)} €</div>
+    const type = movement > 1 ? 'deposit' : 'withdrawal';
+    const date = new Date(account.movementsDates[idx]);
+
+    const movementDate = formatMovementsDate(date);
+
+    const html = `
+      <div class="movements__row">
+        <div class='movements__type movements__type--${type}'>
+          ${idx + 1} ${type}
         </div>
-      `;
-  
-      containerMovements.insertAdjacentHTML('afterbegin', html);
+        <div class="movements__date">${movementDate}</div>
+        <div class="movements__value">${((Math.abs(movement))).toFixed(2)} €</div>
+      </div>
+    `;
+
+    containerMovements.insertAdjacentHTML('afterbegin', html);
     });
 };
   
@@ -135,15 +198,27 @@ const creatUserName = accounts => {
 };
 creatUserName(accounts);
 
+
 // EVENT HANDLERS
 btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
-  currentUser = accounts.find(acc => acc.username === inputLoginUsername.value)
+  currentUser = accounts.find(acc => acc.username === inputLoginUsername.value);
+
+  console.log(currentUser)
 
   if(currentUser?.pin === Number(inputLoginPin.value)) {
     
     // Display UI and wellcome message
     containerApp.style.opacity = 1;
+
+    // Display current date
+    const currentDate = new Date();
+    const day = `${currentDate.getDate()}`.padStart(2, 0);
+    const month = `${currentDate.getMonth() + 1}`.padStart(2, 0);
+    const year = currentDate.getFullYear();
+    const hour = currentDate.getHours();
+    const minute = currentDate.getMinutes();
+    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`;
 
     labelWelcome.textContent = `Wellcome, ${    currentUser.owner.split(' ')[0]}`;
     
@@ -163,14 +238,22 @@ btnTransfer.addEventListener('click', function(e) {
   const amount = Number(inputTransferAmount.value);
   const recieverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
 
-  if(amount > 0 && recieverAcc.username && currentUser.balance >= amount) {
+  if(
+      amount > 0 
+      && recieverAcc.username 
+      && currentUser.balance >= amount 
+      && recieverAcc.username !== currentUser.username) {
     
     recieverAcc.movements.push(amount);
     currentUser.movements.push(-amount);
-    
+
+    const transferDate = new Date().toISOString();
+    recieverAcc.movementsDates.push(transferDate);
+    currentUser.movementsDates.push(transferDate);
+   
     updateUI(currentUser, sort);
   };
-  
+     
   inputTransferAmount.value = '';
   inputTransferTo.value = '';
 });
@@ -181,6 +264,10 @@ btnLoan.addEventListener('click', function(e) {
   const amount = Math.floor(inputLoanAmount.value);
   if(amount > 0 && currentUser.movements.some(mov => mov / 10)) {
     currentUser.movements.push(amount);
+
+    // Add movement date
+    const loanDate = new Date().toISOString();
+    currentUser.movementsDates.push(loanDate);
     
     // Update UI
     updateUI(currentUser, sort);
