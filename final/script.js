@@ -12,15 +12,13 @@ const account1 = {
   interestRate: 1.2, // %
   pin: 1111,
   movementsDates: [
-    '2019-11-18T21:31:17.178Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z'
-  ]
+    '2022-04-02T21:31:17.178Z',
+    '2022-4-2T21:31:17.178Z',
+    '2022-4-2T21:31:17.178Z',
+    '2022-4-2T21:31:17.178Z',
+    '2022-4-2T21:31:17.178Z'
+  ],
+  locale: 'pt-BR'
 };
 
 const account2 = {
@@ -29,7 +27,7 @@ const account2 = {
   interestRate: 1.5,
   pin: 2222,
   movementsDates: [
-    '2018-12-13T23:16:43.194Z',
+    '2022-04-0T23:16:43.194Z',
     '2018-12-13T23:16:43.194Z',
     '2018-12-13T23:16:43.194Z',
     '2018-12-13T23:16:43.194Z',
@@ -37,7 +35,8 @@ const account2 = {
     '2018-12-13T23:16:43.194Z',
     '2018-12-13T23:16:43.194Z',
     '2018-12-13T23:16:43.194Z'
-  ]
+  ],
+  locale: 'ar-SY'
 };
 
 const account3 = {
@@ -52,7 +51,8 @@ const account3 = {
     '2018-12-13T23:16:43.194Z',
     '2018-12-13T23:16:43.194Z',
     '2018-12-13T23:16:43.194Z'
-  ]
+  ],
+  locale: 'en-US'
 };
 
 const account4 = {
@@ -61,14 +61,15 @@ const account4 = {
   interestRate: 1,
   pin: 4444,
   movementsDates: [
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z',
-    '2018-12-13T23:16:43.194Z'
-  ]
-};
+    '2022-04-05T10:16:43.194Z',
+    '2022-03-13T21:16:43.194Z',
+    '2022-04-06T10:16:43.194Z',
+    '2022-07-03T14:16:43.194Z',
+    '2022-04-07T20:16:43.194Z'
+  ],
+  locale: 'en-UK'
+}
+
 
 const accounts = [account1, account2, account3, account4];
 
@@ -103,33 +104,28 @@ let currentUser;
 let sort = false;
 
 
+  
+
 /////////////////////////////////////////////////
 // Functions
 
-const daysPassed = (currentDate, movementDate) => {
-  return (currentDate - movementDate) / (1000 * 60 * 60 * 24);
-}
-
-console.log(daysPassed(new Date(2022, 3, 5), new Date(2022, 3, 2)));
-
 
 const formatMovementsDate = date => {
-  console.log(daysPassed(Number(new Date()), date));
-  console.log(Number(new Date()));
-};
-
-/*
-const formatMovementsDate = date => {
+  const CalcdaysPassed = (currentDate, movementDate) => (currentDate - movementDate) / (1000 * 60 * 60 * 24);
+  
+  const daysPassed = Math.round(Math.abs(CalcdaysPassed(new Date(), date)));
+  
   const day = `${date.getDate()}`.padStart(2, 0);
   const month = `${date.getMonth() + 1}`.padStart(2, 0);
   const year = date.getFullYear();
-
-  return daysPassed(new Date().toDateString(), new Date(year, month, day));
+  
+  
+  if (daysPassed === 0) return 'Today';
+  if (daysPassed === 1) return 'Yesterday';
+  if (daysPassed >= 7) return 'Last week';
+  else return `${day}/${month}/${year}`;
 };
 
-*/
-
-formatMovementsDate(new Date(2022, 3, 2));
 
 const displayMovements = (account, sortState) => { 
   const movements = sortState ? account.movements.slice(0).sort((a, b) => b - a) : account.movements;
@@ -137,8 +133,15 @@ const displayMovements = (account, sortState) => {
   movements.forEach((movement, idx) => {
     const type = movement > 1 ? 'deposit' : 'withdrawal';
     const date = new Date(account.movementsDates[idx]);
-
-    const movementDate = formatMovementsDate(date);
+    console.log(date.getDate())
+    const options = {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric'
+    };
+    
+    const movementDate = new Intl.DateTimeFormat(
+      account.locale, options).format();
 
     const html = `
       <div class="movements__row">
@@ -204,7 +207,6 @@ btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
   currentUser = accounts.find(acc => acc.username === inputLoginUsername.value);
 
-  console.log(currentUser)
 
   if(currentUser?.pin === Number(inputLoginPin.value)) {
     
@@ -212,13 +214,18 @@ btnLogin.addEventListener('click', function(e) {
     containerApp.style.opacity = 1;
 
     // Display current date
-    const currentDate = new Date();
-    const day = `${currentDate.getDate()}`.padStart(2, 0);
-    const month = `${currentDate.getMonth() + 1}`.padStart(2, 0);
-    const year = currentDate.getFullYear();
-    const hour = currentDate.getHours();
-    const minute = currentDate.getMinutes();
-    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`;
+    const now = new Date();
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+    };
+    
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentUser.locale, options
+      ).format(now);
 
     labelWelcome.textContent = `Wellcome, ${    currentUser.owner.split(' ')[0]}`;
     
@@ -297,13 +304,3 @@ btnSort.addEventListener('click', function() {
 
   updateUI(currentUser, sort);
 });
-
-
-/*
-const euroToUsd = 1.1;
-const movementsDollar = movements.map(movement => movement * euroToUsd);
-
-for(const movement of movementsDollar) {
-  console.log(Math.trunc(movement) + ' USD');
-};
-*/
